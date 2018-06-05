@@ -3,6 +3,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var path = require("path");
 
 // scraping tools
 var request = require("request");
@@ -41,6 +42,9 @@ app.use(express.static("public"));
 // mongoose.Promise = Promise;
 // mongoose.connect(MONGODB_URI);
 
+// Static directory
+app.use(express.static(path.join(__dirname, "public")));
+
 // set handlebars
 var exphbs = require("express-handlebars");
 
@@ -51,8 +55,15 @@ app.set("view engine", "handlebars");
 
 // homepage route
 app.get("/", function(req, res) {
-	res.send("wazzup");
+	Article.find({ "saved": false }, function(err, data) {
+		var hbsObject = {
+			article: data
+		};
+	console.log(hbsObject);
+	res.render("homepage", hbsObject);
+	});
 });
+
 
 // GET route for scraping echoJS website
 app.get("/scrape", function(req, res) {
