@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="col-md-12 jumbotron">
+    <div class="text-center">
+      <h1> New York Times Mongo Scraper</h1>
+    </div>
+  </div>
+
+ <div class="col-md-12">
+ {{#if Article}}
+
+  {{#each Article}}
+    <div class="col-sm-8">
+      <div class="card loca">
+        <div class="card-title">
+          <h2 class="article-title">
+            <a href="/articles/{{this.id}}">{{this.title}}</a>
+          </h2>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{this.summary}}</p>
+        </div>
+        <div class="card-footer">
+          <button class="save" data-id="{{this.id}}" data-saved="false">
+            <i class="glyphicon glyphicon-floppy-saved"></i>
+          </button>
+          <a href="articles/note/{{this._id}}" data-id="{{this._id}}" class="btn btn-info" role="button">Make a note!</a>
+        </div>
+      </div>
+    </div>
+
+    {{/each}}
+  {{/if}}
+
+
+
+ </div>
+
+</div>

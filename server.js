@@ -59,7 +59,7 @@ app.get("/scrape", function(req, res) {
 	// use request to grab body of html
 	request("https://www.nytimes.com/", function(error, response, html) {
 		// load html into cheerio with $ as a shorthand selector
-		var $ = cheerio.load(response.data);
+		var $ = cheerio.load(html);
 
 		// grab every h2 within an article tag
 		$("article h2").each(function(i, element) {
@@ -78,15 +78,26 @@ app.get("/scrape", function(req, res) {
 				.attr("href");
 
 			// create new article using "result" object built from scraping 
-			Article.create(result)
-				.then(function(dbArticle) {
-					// display added result in console
-					console.log(dbArticle);
-				})
-				.catch(function(err) {
-					// if an error occurs, send it to the client
-					return res.json(err);
-				});
+			// Article.create(result)
+			// 	.then(function(dbArticle) {
+			// 		// display added result in console
+			// 		console.log(dbArticle);
+			// 	})
+			// 	.catch(function(err) {
+			// 		// if an error occurs, send it to the client
+			// 		return res.json(err);
+			// 	});
+
+			var entry = new Article(result);
+
+			entry.save(function(err, doc) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					console.log(doc);
+				}
+			})
 		});
 
 		// if we are able to successfully scrape & save an Article, send a msg to the client
@@ -94,10 +105,28 @@ app.get("/scrape", function(req, res) {
 	});
 });
 
+// GET route for getting article by id
+app.get("articles/:id", function(req, res) {
+	// grab article by id
+	Article.findOne({ _id: req.params.id })
+	// populate notes associated with the article
+	.populate("note")
+	.then(function(dbArticle) {
+		// if we're able to successfully update article, send back to client
+		res.json(dbArticle);
+	})
+
+	.catch(function(err) {
+		// if an error occurred, send to client
+		res.json(err);
+	});
+})
+
 // GET route for getting saved articles
 app.get("/articles/saved", function(req, res) {
-	// grab every article in the Articles collection
-	Article.find({})
+	// grab every article in the saved Articles collection
+	Article.find({ "saved": true })
+		.populate("notes")
 		.then(function(dbArticle) {
 			// if we're able to successfully update article, send back to client
 			res.json(dbArticle);
@@ -112,7 +141,7 @@ app.get("/articles/saved", function(req, res) {
 // PUT route for saving article
 app.put("/articles/save/:id", function(req, res) {
 	// use article id to find & update its boolean
-	Article.findOneAndUpdate({ _id: req.params.id }, { saved: true });
+	Article.findOneAndUpdate({ _id: req.params.id }, { saved: true })
 		.then(function(dbArticle) {
 			// if we're able to successfully update article, send back to client
 			res.json(dbArticle);
@@ -129,7 +158,7 @@ app.put("/articles/save/:id", function(req, res) {
 
 app.post("/articles/delete/:id", function() {
 	// use article _id to find & update saved boolean
-	Article.findOneAndUpdate({ _id: req.params.id}, { saved: false }, { notes: [] });
+	Article.findOneAndUpdate({ _id: req.params.id}, { saved: false }, { notes: [] })
 		.then(function(dbArticle) {
 			// if we're able to successfully update article, send back to client
 			res.json(dbArticle);
@@ -142,7 +171,7 @@ app.post("/articles/delete/:id", function() {
 });
 
 // POST route for creating new note
-app.post("/articles/:id", function(req, res) {
+app.post("/articles/note/:id", function(req, res) {
 	// create a new note and pass the req.body to the entry
 	Note.create(req.body)
 		.then(function(dbNote) {
@@ -162,7 +191,7 @@ app.post("/articles/:id", function(req, res) {
 
 // DELETE route for deleting note
 app.post("/notes/delete/:note_id/:article_id", function(req, res) {
-
+	console.log("deleted!")
 })
 
 
