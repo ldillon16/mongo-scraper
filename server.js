@@ -28,22 +28,23 @@ var collections = ["scrapedData"];
 // use morgan logger for loggin results
 app.use(logger("dev"));
 // use body-parser for handling form submissions
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 // use express.static to serve the public folder as a static directory
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // connect to the MongoDB
 
 // // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-// var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/nytdb";
 
 // // Set mongoose to leverage built in JavaScript ES6 Promises
 // // Connect to the Mongo DB
 // mongoose.Promise = Promise;
 // mongoose.connect(MONGODB_URI);
 
-// Static directory
-app.use(express.static(path.join(__dirname, "public")));
+MONGODB_URI: mongodb://heroku_4d7f5njk:5kkc2674i2on6fi80s4m6kjfp9@ds147890.mlab.com:47890/heroku_4d7f5njk
+
+
 
 // set handlebars
 var exphbs = require("express-handlebars");
@@ -166,7 +167,6 @@ app.put("/articles/save/:id", function(req, res) {
 
 
 // DELETE route for deleting article
-
 app.post("/articles/delete/:id", function() {
 	// use article _id to find & update saved boolean
 	Article.findOneAndUpdate({ _id: req.params.id}, { saved: false }, { notes: [] })
@@ -201,7 +201,7 @@ app.post("/articles/note/:id", function(req, res) {
 });
 
 // DELETE route for deleting note
-app.post("/notes/delete/:note_id/:article_id", function(req, res) {
+app.post("/notes/delete/:note_id", function(req, res) {
 	console.log("deleted!")
 })
 

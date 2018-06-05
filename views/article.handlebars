@@ -1,0 +1,59 @@
+<head>
+  <link rel="stylesheet" href="../css/styles.css" type="text/css" />
+</head>
+
+<body>
+  <div class="row info">
+    <div class="col-sm-8">
+      <div class="card loca">
+        <div class="card-title">
+          <h2 class="article">
+          	<a href="/articles/{{this._id}}">{{this.title}}</a>
+          </h2>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{this.summary}}</p>
+        </div>
+        <div class="card-footer">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="row">
+  <div class="col-md-6">
+    <form action="/articles/note/{{this._id}}" method="post">
+      <div class="form-group">
+        Name: 
+        <input class="form-control" type="text" name="name">
+      </div>
+      <div class="form-group">
+      	Note:
+      	<textarea class="form-contol" name="note" rows="6" cols="50"></textarea>
+      	<br>
+      	<input type="submit">
+      </div>
+    </form>
+  </div>
+</div>
+
+{{#each this.Note}}
+
+<div class="row info">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-title">
+        <h2 class="note-name">{{this.name}}</h2>
+      </div>
+      <div class="card-body">
+      	<p class="card-text">{{this.body}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{{/each}}
+
+</body>
