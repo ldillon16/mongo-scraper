@@ -1,14 +1,17 @@
 
 
 
+// scrape button
 
-
-
-$("scrape").on("click", function(x) {
+$("document").on("click", "#scrape", function() {
 	$.ajax({
+
 		method: "GET",
 		url: "/scrape"
-	}).
+	}).then(function(data) {
+		console.log(data)
+		window.location = "/"
+	})
 })
 
 
@@ -49,3 +52,18 @@ $("document").on("click", "#savenote", function() {
 
 	$("bodyinput").val("");
 })
+
+
+// delete note button
+$("document").on("click", ".deleteNote", function() {
+	// var noteId = $(this).attr()
+	console.log("deleted!")
+
+})
+
+
+
+
+
+
+

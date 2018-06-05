@@ -4,20 +4,23 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var path = require("path");
+var methodOverride = require("method-override");
 
 // scraping tools
 var request = require("request");
 var cheerio = require("cheerio");
 
 // requiring all models
-var Note = require("./models/note.js");
-var Article = require("./models/article.js")
+var Notes = require("./models/note.js");
+var Articles = require("./models/article.js")
 
 // port
 var PORT = process.env.PORT || 8080;
 
 // initialize express
 var app = express();
+
+app.use(methodOverride("_method"));
 
 // database config
 var databaseUrl = "scraper";
@@ -35,14 +38,15 @@ app.use(express.static(path.join(__dirname, "public")));
 // connect to the MongoDB
 
 // // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
- var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/nytdb";
+   // var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/nytdb";
 
+mongoose.connect("mongodb://localhost/nytdb");
 // // Set mongoose to leverage built in JavaScript ES6 Promises
 // // Connect to the Mongo DB
 // mongoose.Promise = Promise;
 // mongoose.connect(MONGODB_URI);
 
-MONGODB_URI: mongodb://heroku_4d7f5njk:5kkc2674i2on6fi80s4m6kjfp9@ds147890.mlab.com:47890/heroku_4d7f5njk
+// MONGODB_URI: mongodb://heroku_4d7f5njk:5kkc2674i2on6fi80s4m6kjfp9@ds147890.mlab.com:47890/heroku_4d7f5njk
 
 
 
@@ -56,13 +60,14 @@ app.set("view engine", "handlebars");
 
 // homepage route
 app.get("/", function(req, res) {
-	Article.find({ "saved": false }, function(err, data) {
-		var hbsObject = {
-			article: data
-		};
-	console.log(hbsObject);
-	res.render("homepage", hbsObject);
-	});
+	Articles.find({ "saved": false }, function(err, data) {
+	 	var hbsObject = {
+	 		Articles: data
+	 	};
+	 console.log(hbsObject);
+	res.render("homepage");
+    })
+	
 });
 
 
@@ -157,6 +162,14 @@ app.put("/articles/save/:id", function(req, res) {
 		.then(function(dbArticle) {
 			// if we're able to successfully update article, send back to client
 			res.json(dbArticle);
+
+			// handlebars 
+
+			// var hbsObject = {
+			// 	Article: dbArticle
+			// };
+			// console.log(hbsObject);
+			// res.render("homepage", hbsObject);
 		})
 
 		.catch(function(err) {
@@ -215,5 +228,5 @@ app.post("/notes/delete/:note_id", function(req, res) {
 // start server
 app.listen(PORT, function() {
 	console.log("app running on port " + PORT + "!")
-})
+});
 

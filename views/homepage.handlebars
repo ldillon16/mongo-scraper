@@ -6,9 +6,9 @@
   </div>
 
  <div class="col-md-12">
- {{#if Article}}
+ {{#if Articles}}
 
-  {{#each Article}}
+  {{#each Articles}}
     <div class="col-sm-8">
       <div class="card loca">
         <div class="card-title">
@@ -18,9 +18,10 @@
         </div>
         <div class="card-body">
           <p class="card-text">{{this.summary}}</p>
+          <a href ={{this.link}} target="_blank">{{this.link}}</a>
         </div>
         <div class="card-footer">
-          <button class="save" data-id="{{this.id}}" data-saved="false">
+          <button type="button" class="save" data-id="{{this._id}}" data-saved="false">
             <i class="glyphicon glyphicon-floppy-saved"></i>
           </button>
           <a href="articles/note/{{this._id}}" data-id="{{this._id}}" class="btn btn-info" role="button">Make a note!</a>
@@ -29,10 +30,16 @@
     </div>
 
     {{/each}}
-  {{/if}}
+  {{else}}
+    <div class="col-sm-8">
+      <div>
+        <h4> Oh no! We don't have any new articles for you :( </h4>
+      </div>
+    </div>
 
 
-
+ {{/if}}
  </div>
+
 
 </div>
