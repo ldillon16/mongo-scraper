@@ -33,18 +33,20 @@ app.use(express.static("public"));
 
 // connect to the MongoDB
 
-// // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-   // var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/nytdb";
 
-mongoose.connect("mongodb://localhost/nytdb");
-// // Set mongoose to leverage built in JavaScript ES6 Promises
-// // Connect to the Mongo DB
-// mongoose.Promise = Promise;
-// mongoose.connect(MONGODB_URI);
+mongoose.connect("");
+//mongoose.connect("mongodb://localhost/mongo-scraper");
+var db = mongoose.connection;
 
-// MONGODB_URI: mongodb://heroku_4d7f5njk:5kkc2674i2on6fi80s4m6kjfp9@ds147890.mlab.com:47890/heroku_4d7f5njk
+// Show any mongoose errors
+db.on("error", function(err) {
+  console.log("Mongoose Error: ", err);
+});
 
-
+// Once logged in to the db through mongoose, log a success message
+db.once("open", function() {
+  console.log("The Mongoose connection is successful!");
+});
 
 // set handlebars
 var exphbs = require("express-handlebars");
