@@ -5,6 +5,7 @@
 
 .navbar {
 	background: black;
+	width: 100%;
 }
 
 .navbar-brand {
@@ -18,14 +19,23 @@
 }*/
 
 /* Style the links inside the navigation bar */
-/*.topnav a {
-    float: left;
+.navbar-right {
+    float: right;
     color: #f2f2f2;
+    overflow: none;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
-}*/
+}
+
+.card {
+    padding-top: 30px;
+    margin-bottom: 25px;
+    padding-left: 15px;
+    width: 600px;
+
+}
 
 /* Change the color of links on hover */
 /*.topnav a:hover {

@@ -131,7 +131,7 @@ app.get("/articles/:_id", function(req, res) {
 			 	Articles: dbArticle
 			 };
 			// console.log(hbsObject);
-			 res.render("single-article", hbsObject);
+			 res.render("article", hbsObject);
 	})
 
 	.catch(function(err) {
@@ -146,7 +146,7 @@ app.get("/articles/saved", function(req, res) {
 	console.log("SAVED");
 	Articles.find({ "saved": true })
 		.populate("notes")
-		.then(function(dbArticle) {
+		.then(function(err, dbArticle) {
 
 			// handlebars 
 
@@ -154,7 +154,7 @@ app.get("/articles/saved", function(req, res) {
 			 	Articles: dbArticle
 			 };
 			// console.log(hbsObject);
-			 res.render("article", hbsObject);
+			 res.render("saved", hbsObject);
 		})
 
 		.catch(function(err) {
@@ -194,7 +194,7 @@ app.post("/articles/delete/:id", function() {
 });
 
 // POST route for creating new note
-app.post("/articles/note/:article_id/:note_id", function(req, res) {
+app.post("/articles/note/:note_id", function(req, res) {
 	// create a new note and pass the req.body to the entry
 	var newNote = new Notes({
 		name: req.body.name,
@@ -229,7 +229,7 @@ app.post("/articles/note/:article_id/:note_id", function(req, res) {
 });
 
 // DELETE route for deleting note
-app.get("/notes/delete/:note_id", function(req, res) {
+app.get("/notes/delete/:note_id/:article_id", function(req, res) {
 	console.log("deleted!")
 	Notes.remove (
 		{

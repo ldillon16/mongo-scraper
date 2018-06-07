@@ -1,67 +1,35 @@
-<head>
-  <link rel="stylesheet" href="/assets/css/style.css" type="text/html" />
-</head>
-
-<body>
+<div class="container">
 
 
-{{#if Articles}}
-{{#each Articles}}
-<div>
-  <div class="row info">
-    <div class="col-sm-8">
-      <div class="card loca">
-        <div class="card-title">
-          <h2 class="article" data-id={{this._id}}>
-          	<a href="/articles/{{this._id}}">{{this.title}}</a>
-          </h2>
-        </div>
-        <div class="card-body">
-          <p class="card-text">{{this.summary}}</p>
-        </div>
-        <div class="card-footer">
 
-        </div>
-      </div>
-    </div>
-  </div>
-
-<div class="row">
-  <div class="col-md-6">
-    <form action="/articles/note/{{this._id}}" method="post">
-      <div class="form-group">
-        Name: 
-        <input class="form-control" type="text" name="name">
-      </div>
-      <div class="form-group">
-      	Note:
-      	<textarea class="form-contol" name="note" rows="6" cols="50"></textarea>
-      	<br>
-      	<input type="submit" class="savenote">
-      </div>
-    </form>
-  </div>
-</div>
-
-{{#each notes}}
-
-<div class="row info">
   <div class="col-md-12">
-    <div class="card">
-      <div class="card-title">
-        <h2 class="note-name">{{this.name}}</h2>
+    {{#if article}}
+    {{#each article}}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3>{{this.title}}</h4>
+        </div>
+        <div class="panel-body">
+          <p> {{this.summary}} </p>
+          <a href= {{this.link}} target="_blank">{{this.link}}</a>
+          <button type="button" class="btn btn-success addNote" data-toggle="modal" data-target="#noteModal{{this._id}}" data-id={{this._id}}>Add a Note</button>
+          <button type="button" class="btn btn-danger delete" data-id={{this._id}}>Delete</button>
+        </div>
       </div>
-      <div class="card-body">
-      	<p class="card-text">{{this.body}}</p>
+    {{/each}}
+    {{else}}
+      <div class="panel-body">
+        <h3>Oops! It looks like the database is down</h3>
       </div>
-    </div>
+    {{/if}}
   </div>
 </div>
 
 
-{{/each}}
-</div>
-{{/each}}
-{{/if}}
 
-</body>
+
+{{#each article}}
+
+  {{> notes-modal }}
+
+{{/each}}

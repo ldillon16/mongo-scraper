@@ -14,7 +14,7 @@
 
   {{#each Articles}}
     <div class="col-sm-8">
-      <div class="card loca">
+      <div class="card">
         <div class="card-title">
           <h2 class="article-title">
             <a href="/articles/{{this._id}}">{{this.title}}</a>
@@ -25,9 +25,7 @@
           <a href ={{this.link}} target="_blank">{{this.link}}</a>
         </div>
         <div class="card-footer">
-          <button type="button" class="save" data-id="{{this._id}}">
-            <i class="glyphicon glyphicon-floppy-saved"></i>
-          </button>
+          <button type="button" class="save" data-id="{{this._id}}">Save</button>
 
         </div>
       </div>
