@@ -22,10 +22,6 @@ var app = express();
 
 app.use(methodOverride("_method"));
 
-// database config
-var databaseUrl = "scraper";
-var collections = ["scrapedData"];
-
 // config middleware
 
 // use morgan logger for loggin results
@@ -33,7 +29,7 @@ app.use(logger("dev"));
 // use body-parser for handling form submissions
 app.use(bodyParser.urlencoded({ extended: false }));
 // use express.static to serve the public folder as a static directory
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 
 // connect to the MongoDB
 
@@ -64,10 +60,9 @@ app.get("/", function(req, res) {
 	 	var hbsObject = {
 	 		Articles: data
 	 	};
-	 console.log(hbsObject);
-	res.render("homepage");
-    })
-	
+	 // console.log(hbsObject);
+	res.render("homepage", hbsObject);
+    })	
 });
 
 
@@ -105,7 +100,7 @@ app.get("/scrape", function(req, res) {
 			// 		return res.json(err);
 			// 	});
 
-			var entry = new Article(result);
+			var entry = new Articles(result);
 
 			entry.save(function(err, doc) {
 				if (err) {
@@ -118,19 +113,25 @@ app.get("/scrape", function(req, res) {
 		});
 
 		// if we are able to successfully scrape & save an Article, send a msg to the client
-		res.send("Scrape Complete!")
+		res.redirect("/")
+		console.log("scrape complete!")
 	});
 });
 
 // GET route for getting article by id
-app.get("articles/:id", function(req, res) {
+app.get("/articles/:_id", function(req, res) {
 	// grab article by id
-	Article.findOne({ _id: req.params.id })
+	Articles.findOne({ "_id": req.params.id })
 	// populate notes associated with the article
 	.populate("note")
 	.then(function(dbArticle) {
 		// if we're able to successfully update article, send back to client
-		res.json(dbArticle);
+			// handlebars 
+			var hbsObject = {
+			 	Articles: dbArticle
+			 };
+			// console.log(hbsObject);
+			 res.render("single-article", hbsObject);
 	})
 
 	.catch(function(err) {
@@ -142,11 +143,18 @@ app.get("articles/:id", function(req, res) {
 // GET route for getting saved articles
 app.get("/articles/saved", function(req, res) {
 	// grab every article in the saved Articles collection
-	Article.find({ "saved": true })
+	console.log("SAVED");
+	Articles.find({ "saved": true })
 		.populate("notes")
 		.then(function(dbArticle) {
-			// if we're able to successfully update article, send back to client
-			res.json(dbArticle);
+
+			// handlebars 
+
+			var hbsObject = {
+			 	Articles: dbArticle
+			 };
+			// console.log(hbsObject);
+			 res.render("article", hbsObject);
 		})
 
 		.catch(function(err) {
@@ -155,23 +163,14 @@ app.get("/articles/saved", function(req, res) {
 		});
 });
 
-// PUT route for saving article
-app.put("/articles/save/:id", function(req, res) {
+// POSt route for saving article
+app.post("/articles/save/:id", function(req, res) {
 	// use article id to find & update its boolean
-	Article.findOneAndUpdate({ _id: req.params.id }, { saved: true })
-		.then(function(dbArticle) {
-			// if we're able to successfully update article, send back to client
-			res.json(dbArticle);
-
-			// handlebars 
-
-			// var hbsObject = {
-			// 	Article: dbArticle
-			// };
-			// console.log(hbsObject);
-			// res.render("homepage", hbsObject);
+	Articles.findOneAndUpdate({ "_id": req.params.id }, { "saved": true })
+		.then(function(err, doc) {
+			// send doc to browser
+			res.send(doc)
 		})
-
 		.catch(function(err) {
 			// if an error occurred, send to client
 			res.json(err);
@@ -182,7 +181,7 @@ app.put("/articles/save/:id", function(req, res) {
 // DELETE route for deleting article
 app.post("/articles/delete/:id", function() {
 	// use article _id to find & update saved boolean
-	Article.findOneAndUpdate({ _id: req.params.id}, { saved: false }, { notes: [] })
+	Articles.findOneAndUpdate({ "_id": req.params.id}, { "saved": false }, { "notes": [] })
 		.then(function(dbArticle) {
 			// if we're able to successfully update article, send back to client
 			res.json(dbArticle);
@@ -195,27 +194,59 @@ app.post("/articles/delete/:id", function() {
 });
 
 // POST route for creating new note
-app.post("/articles/note/:id", function(req, res) {
+app.post("/articles/note/:article_id/:note_id", function(req, res) {
 	// create a new note and pass the req.body to the entry
-	Note.create(req.body)
-		.then(function(dbNote) {
-			// if a note was created successfully, find one Article with an "_id" and equal to "req.params.id"
-			// update the article to be associated with the new Note
-			return Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
-		})
-		.then(function(dbArticle) {
-			// if we were able to successfully add a note to an article, send it back to the client
-			res.json(dbArticle);
-		})
-		.catch(function(err) {
-			// if an error occurred, send it to the client
-			res.json(err);
-		})
+	var newNote = new Notes({
+		name: req.body.name,
+		body: req.body.body,
+		article: req.params.id
+	});
+	console.log("newNote")
+	// save new note to db
+	newNote.save(function(err, note) {
+		// check for errors and log them
+		if (err) {
+			console.log(err)
+		}
+		else {
+
+		Articles.findOneAndUpdate({ _id: req.params.article_id }, { $push: { "notes": note } }, { new: true })
+		
+		.then(function(err) {
+			if (err) {
+				console.log(err);
+				// if an error occurred, send it to the client
+				res.send(err);
+			}
+		
+			else {
+
+				res.send(note);
+			}
+		});
+		}
+	});
 });
 
 // DELETE route for deleting note
-app.post("/notes/delete/:note_id", function(req, res) {
+app.get("/notes/delete/:note_id", function(req, res) {
 	console.log("deleted!")
+	Notes.remove (
+		{
+			_id: mongojs.ObjectId(req.params.id)
+		},
+		function(err, removed) {
+			// log errors from mongojs
+			if (err) {
+				console.log(err);
+				res.send(err);
+			}
+			else {
+				console.log(removed);
+				res.send(removed);
+			}
+		}
+	)
 })
 
 

@@ -9,12 +9,12 @@ var ArticleSchema = new Schema({
 
 	title: {
 		type: String,
-		required: true
+		required: true,
+		unique: true
 	},
 
 	summary: {
-		type: String,
-		required: true
+		type: String
 	},
 
 	link: {
@@ -27,7 +27,7 @@ var ArticleSchema = new Schema({
 		default: false
 	},
 
-	note: {
+	note_id: {
 		type: Schema.Types.ObjectId,
 		ref: "Note"
 	}

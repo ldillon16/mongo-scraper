@@ -1,8 +1,5 @@
 
-
-
 // scrape button
-
 $("document").on("click", "#scrape", function() {
 	$.ajax({
 
@@ -16,30 +13,49 @@ $("document").on("click", "#scrape", function() {
 
 
 // save article button
-$("document").on("click", ".save", function() {
+$(".save").on("click", function() {
+	console.log("save button clicked")
 	var thisId = $(this).attr("data-id");
 	$.ajax({
 		method: "POST",
-		url: "articles/save/" + thisId
+		url: "/articles/save/" + thisId
 	})
 	.then(function(data) {
 		console.log("article saved")
-		window.location = "/"
+		// window.location = "/"
+	})
+})
+
+/// single article view
+$("document").on("click", "h2", function() {
+	var thisId = $(this).attr("data-id");
+	$.ajax({
+		method: "GET",
+		url: "/articles/" + thisId
+	})
+	.then(function(data) {
+		console.log("article")
+
 	})
 })
 
 
+// make a note
+$("document").on("click", ".add-note", function() {
+
+})
+
 
 
 // save note button
-$("document").on("click", "#savenote", function() {
+$("document").on("click", ".savenote", function() {
 
 	var thisId = $(this).attr("data-id");
 	$.ajax({
 		method: "POST",
 		url: "/articles/note/" + thisId,
 		data: {
-			body: $("#bodyinput").val()
+			body: $("#bodyinput" + thisId).val()
 		}
 	})
 
@@ -47,10 +63,11 @@ $("document").on("click", "#savenote", function() {
 		console.log(data);
 
 		//empty notes section
-		$("#notes").empty();
+		$("#bodyinput" + thisId).val("");
+		window.location = "/articles/note/" + thisId;
 	});
 
-	$("bodyinput").val("");
+
 })
 
 

@@ -4,24 +4,28 @@
 
 <body>
 
+<div class="container">
 
-{{#if Articles}}
-{{#each Articles}}
-<div>
-  <div class="row info">
-    <div class="col-sm-8">
-      <div class="card loca">
-        <div class="card-title">
-          <h2 class="article" data-id={{this._id}}>
-          	<a href="/articles/{{this._id}}">{{this.title}}</a>
-          </h2>
-        </div>
-        <div class="card-body">
-          <p class="card-text">{{this.summary}}</p>
-        </div>
-        <div class="card-footer">
 
-        </div>
+  <div class="col-md-12">
+
+
+      <div class="row info">
+        <div class="col-sm-8">
+          <div class="card loca">
+            <div class="card-title">
+              <h2 class="article" data-id={{this._id}}>
+                {{this.title}}
+              </h2>
+            </div>
+            <div class="card-body">
+              <p class="card-text">{{this.summary}}</p>
+              <a href={{this.link}} target="_blank">{{this.link}}</a>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="btn btn-info add-note"
+
+            </div>
       </div>
     </div>
   </div>
@@ -58,10 +62,10 @@
   </div>
 </div>
 
-
 {{/each}}
 </div>
-{{/each}}
-{{/if}}
+
+
+</div>
 
 </body>
